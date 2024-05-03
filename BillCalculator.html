@@ -1,0 +1,213 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Restaurant Bill Calculator</title>
+  <style>
+    body {
+      background-image:url(food.jpg) ;
+      background-size: 1000px 1000px;
+      font-family: Arial, sans-serif;
+      background-color: lightskyblue;
+      margin: 0;
+      padding: 0;
+    }
+
+    .container {
+      max-width: 1000px;
+      margin: 30px auto;
+      background-color: lightgoldenrodyellow;
+      padding: 30px;
+      border-radius: 10px;
+      box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    }
+
+    h1 {
+      text-align: center;
+      color: red;
+    }
+
+    h2 {
+      color: ;
+    }
+
+    .menu-container {
+      display: flex;
+      justify-content: space-between;
+      gap: 20px; /* Add gap between sections */
+    }
+
+    .menu-item {
+      flex-basis: calc(33.33% - 10px);
+      margin-bottom: 15px;
+    }
+
+    .checkbox {
+      margin-right: 10px;
+    }
+
+    button {
+      background-color: #1a8ddf;
+      color: lightblue;
+      padding: 10px 20px;
+      border: none;
+      border-radius: 5px;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+
+    button:hover {
+      background-color: #96c8d5;
+    }
+
+    #total {
+      font-size: 1.2em;
+      margin-top: 20px;
+    }
+
+    .heading {
+      margin-top: 20px;
+      font-size: 1.2em;
+      color: #444;
+    }
+
+    .main-dish-container,
+    .lunch-container,
+    .dinner-container {
+      border: 1px solid lightskyblue;
+      padding: 15px;
+      border-radius: 5px;
+      margin-top: 10px;
+    }
+
+    .main-dish-container label,
+    .lunch-container label,
+    .dinner-container label {
+      font-size: 1.1em;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>Restaurant Bill Calculator</h1>
+    <h2>Menu</h2>
+    <div class="menu-container">
+      <div class="main-dish-container">
+        <h3 class="heading">Breakfast</h3>
+        <div class="menu-item">
+          <input type="checkbox" id="idly" class="checkbox" data-price="50">
+          <label for="idly">idly - ₹50</label>
+          <input type="number" id="idly-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="dosa" class="checkbox" data-price="600">
+          <label for="dosa">dosa - ₹30</label>
+          <input type="number" id="dosa-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="pongal" class="checkbox" data-price="150">
+          <label for="pongal">pongal - ₹150</label>
+          <input type="number" id="pongal-quantity" class="quantity" min="1">
+        </div>
+      </div>
+      <div class="lunch-container">
+        <h3 class="heading">lunch</h3>
+        <div class="menu-item">
+          <input type="checkbox" id="biriyani" class="checkbox" data-price="150">
+          <label for="biriyani">Biriyani - ₹150</label>
+          <input type="number" id="biriyani-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="chicken rice" class="checkbox" data-price="100">
+          <label for="chicken rice">Chickenrice - ₹100</label>
+          <input type="number" id="chicken rice-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="varity rice" class="checkbox" data-price="50">
+          <label for="varity rice">Varity rice- ₹50</label>
+          <input type="number" id="varity rice-quantity" class="quantity" min="1">
+        </div>
+      </div>
+      <div class="dinner-container">
+        <h3 class="heading">dinner</h3>
+        <div class="menu-item">
+          <input type="checkbox" id="Noodles" class="checkbox" data-price="150">
+          <label for="Noodles">Noodles - ₹150</label>
+          <input type="number" id="Noodles-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="chapati" class="checkbox" data-price="50">
+          <label for="chapati">Chapati- ₹50</label>
+          <input type="number" id="chapati-quantity" class="quantity" min="1">
+        </div>
+        <div class="menu-item">
+          <input type="checkbox" id="Grill chicken" class="checkbox" data-price="400">
+          <label for="Grill chicken">Grill chicken - ₹400</label>
+          <input type="number" id="Grill chicken-quantity" class="quantity" min="1">
+        </div>
+      </div>
+    </div>
+    <button id="clear-order">Clear Order</button>
+    <button id="add-item">Add Item</button>
+    <button id="view-bill">View Bill</button>
+    <div id="total"></div>
+  </div>
+
+  <script>
+    let bill = 0;
+    let selectedItems = [];
+
+    document.querySelectorAll('.checkbox').forEach(function(checkbox) {
+      checkbox.addEventListener('change', function() {
+        const price = Math.floor(parseFloat(this.dataset.price)); // Round down to the nearest integer
+        const quantity = parseInt(this.nextElementSibling.nextElementSibling.value); // Get the value of the quantity input
+        if (this.checked) {
+          bill += price * quantity;
+          selectedItems.push({ name: this.id, price: price, quantity: quantity });
+        } else {
+          bill -= price * quantity;
+          selectedItems = selectedItems.filter(item => item.name !== this.id);
+        }
+      });
+    });
+
+    document.getElementById('clear-order').addEventListener('click', function() {
+      document.querySelectorAll('.checkbox').forEach(function(checkbox) {
+        checkbox.checked = false;
+      });
+      document.querySelectorAll('.quantity').forEach(function(quantityInput) {
+        quantityInput.value = ""; // Set input value to empty string
+      });
+      bill = 0;
+      selectedItems = [];
+      document.getElementById('total').innerText = "";
+    });
+
+    document.getElementById('add-item').addEventListener('click', function() {
+      const selectedItem = document.querySelector('input[name="item"]:checked');
+      if (selectedItem) {
+        const itemName = selectedItem.value;
+        const itemPrice = Math.floor(parseFloat(selectedItem.dataset.price)); // Round down to the nearest integer
+        const itemQuantity = parseInt(selectedItem.nextElementSibling.value);
+        bill += itemPrice * itemQuantity;
+        selectedItems.push({ name: itemName, price: itemPrice, quantity: itemQuantity });
+      } else {
+        alert("Please select an item to add.");
+      }
+    });
+
+    document.getElementById('view-bill').addEventListener('click', function() {
+      const totalElement = document.getElementById('total');
+      totalElement.innerHTML = `Total Bill: ₹${bill}`;
+
+      // Print selected items
+      console.log("Selected Items:");
+      selectedItems.forEach(function(item) {
+        console.log(`${item.name} - Quantity: ${item.quantity}, Price: ₹${item.price}`);
+      });
+    });
+  </script>
+</body>
+</html>
